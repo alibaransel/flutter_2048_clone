@@ -21,38 +21,39 @@ class _HomeScreenState extends State<HomeScreen> {
   AppBar _buildAppBar() {
     return AppBar(
       centerTitle: true,
-      title: const Text("2048"),
+      title: const Text('2048'),
     );
   }
 
   Widget _buildBody() {
-    return Container(
-      height: 400,
-      width: 400,
-      alignment: Alignment.center,
-      margin: const EdgeInsets.all(10),
+    return Padding(
       padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: Colors.black26,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: AspectRatio(
-        aspectRatio: 1,
-        child: GridView.builder(
-          itemCount: 16,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 4,
-            mainAxisSpacing: 10,
-            crossAxisSpacing: 10,
-          ),
-          itemBuilder: (context, index) => Container(
+      child: Center(
+        child: ConstrainedBox(
+          constraints: BoxConstraints.loose(const Size.square(400)),
+          child: DecoratedBox(
             decoration: BoxDecoration(
+              color: Colors.black26,
               borderRadius: BorderRadius.circular(10),
-              color: Color.fromARGB(
-                255,
-                Random().nextInt(256),
-                Random().nextInt(256),
-                Random().nextInt(256),
+            ),
+            child: GridView.builder(
+              itemCount: 16,
+              padding: const EdgeInsets.all(10),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 4,
+                mainAxisSpacing: 10,
+                crossAxisSpacing: 10,
+              ),
+              itemBuilder: (context, index) => Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: Color.fromARGB(
+                    255,
+                    Random().nextInt(256),
+                    Random().nextInt(256),
+                    Random().nextInt(256),
+                  ),
+                ),
               ),
             ),
           ),

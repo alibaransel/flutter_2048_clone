@@ -1,6 +1,5 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_2048_clone/game.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -10,11 +9,25 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  late Game game;
+
+  @override
+  void initState() {
+    super.initState();
+    game = Game(
+      height: 4,
+      width: 4,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _buildAppBar(),
       body: _buildBody(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => game.swipe(AxisDirection.left),
+      ),
     );
   }
 
@@ -36,25 +49,31 @@ class _HomeScreenState extends State<HomeScreen> {
               color: Colors.black26,
               borderRadius: BorderRadius.circular(10),
             ),
-            child: GridView.builder(
-              itemCount: 16,
-              padding: const EdgeInsets.all(10),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 4,
-                mainAxisSpacing: 10,
-                crossAxisSpacing: 10,
-              ),
-              itemBuilder: (context, index) => Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Color.fromARGB(
-                    255,
-                    Random().nextInt(256),
-                    Random().nextInt(256),
-                    Random().nextInt(256),
+            child: AnimatedBuilder(
+              animation: game,
+              builder: (context, child) {
+                return GridView.builder(
+                  itemCount: 16,
+                  padding: const EdgeInsets.all(10),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 4,
+                    mainAxisSpacing: 10,
+                    crossAxisSpacing: 10,
                   ),
-                ),
-              ),
+                  itemBuilder: (context, index) => Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Colors.amber,
+                    ),
+                    child: Center(
+                      child: Text(
+                        game.getValueWithIndex(index).toString(),
+                        style: const TextStyle(fontSize: 30),
+                      ),
+                    ),
+                  ),
+                );
+              },
             ),
           ),
         ),

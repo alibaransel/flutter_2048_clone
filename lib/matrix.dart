@@ -6,9 +6,12 @@ class Matrix<T> {
     required this.width,
     required this.fillValue,
   }) {
-    _data = List.filled(
+    _data = List.generate(
       height,
-      List.filled(width, fillValue),
+      (i) => List.generate(
+        width,
+        (i2) => fillValue,
+      ),
     );
   }
 
@@ -16,7 +19,21 @@ class Matrix<T> {
   final int width;
   final T fillValue;
 
-  late final List<List<T>> _data;
+  late List<List<T>> _data;
+
+  Matrix<T> copy() {
+    Matrix<T> copyMatrix = Matrix(
+      height: height,
+      width: width,
+      fillValue: fillValue,
+    );
+    for (int y = 0; y < height; y++) {
+      for (int x = 0; x < width; x++) {
+        copyMatrix.setValue(Point(x, y), _data[y][x]);
+      }
+    }
+    return copyMatrix;
+  }
 
   T getValue(Point<int> point) {
     _checkPoint(point);
@@ -42,6 +59,12 @@ class Matrix<T> {
     return indexes;
   }
 
+  void setValue(Point<int> point, T value) {
+    //TODO
+    _checkPoint(point);
+    _data[point.y][point.x] = value;
+  }
+
   void setValueWithIndex(int index, T value) {
     _checkIndex(index);
     final Point<int> point = _indexToPoint(index);
@@ -60,6 +83,6 @@ class Matrix<T> {
   Point<int> _indexToPoint(int index) {
     final int x = index % width;
     final int y = index ~/ width;
-    return Point<int>(x, y);
+    return Point(x, y);
   }
 }

@@ -1,7 +1,8 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_2048_clone/matrix.dart';
+import 'package:flutter_2048_clone/enums/swipe_direction.dart';
+import 'package:flutter_2048_clone/models/matrix.dart';
 
 class Game extends ChangeNotifier {
   Game({
@@ -24,13 +25,13 @@ class Game extends ChangeNotifier {
 
   int getValueWithIndex(int index) => _grid.getValueWithIndex(index);
 
-  void swipe(AxisDirection direction) {
-    Matrix<int> newGrid = Matrix(
+  void swipe(SwipeDirection direction) {
+    final Matrix<int> newGrid = Matrix(
       height: height,
       width: width,
       fillValue: 0,
     );
-    if (direction == AxisDirection.left) {
+    if (direction == SwipeDirection.left) {
       for (int y = 0; y < height; y++) {
         final List<int> values = [];
         final List<int> counts = [];

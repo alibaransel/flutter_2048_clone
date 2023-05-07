@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_2048_clone/home_screen.dart';
+import 'package:flutter_2048_clone/constants/app_strings.dart';
+import 'package:flutter_2048_clone/ui/game_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,10 +12,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      title: '2048',
-      themeMode: ThemeMode.system,
+      title: AppStrings.appName,
       debugShowCheckedModeBanner: false,
-      home: HomeScreen(),
+      home: GameScreen(),
     );
   }
 }

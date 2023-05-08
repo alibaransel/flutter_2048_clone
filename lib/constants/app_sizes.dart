@@ -9,7 +9,4 @@ class AppSizes {
   static const double spacingL = 50;
 
   static const double borderRadius = 10;
-
-  static const double fontL = 30;
-  static const double fontXL = 100;
 }

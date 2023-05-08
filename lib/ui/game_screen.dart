@@ -1,12 +1,10 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_2048_clone/constants/app_durations.dart';
 import 'package:flutter_2048_clone/constants/app_sizes.dart';
 import 'package:flutter_2048_clone/constants/app_strings.dart';
 import 'package:flutter_2048_clone/enums/game_status.dart';
-import 'package:flutter_2048_clone/enums/swipe_direction.dart';
 import 'package:flutter_2048_clone/models/game.dart';
+import 'package:flutter_2048_clone/ui/swipe_detector.dart';
 
 class GameScreen extends StatefulWidget {
   const GameScreen({super.key});
@@ -66,33 +64,13 @@ class _GameScreenState extends State<GameScreen> {
   }
 
   Widget _buildPlayBox() {
-    Offset? startOffset;
     return DecoratedBox(
       decoration: BoxDecoration(
         color: Colors.black26,
         borderRadius: BorderRadius.circular(AppSizes.borderRadius),
       ),
-      child: Listener(
-        onPointerDown: (topDownDetails) {
-          startOffset = topDownDetails.localPosition;
-        },
-        onPointerUp: (tapUpDetails) {
-          if (startOffset == null) return;
-          final Offset differenceOffset = tapUpDetails.localPosition - startOffset!;
-          if (differenceOffset.distance < 50) return;
-          int angle = -differenceOffset.direction * 180 ~/ pi;
-          if (angle < 0) angle += 360;
-          if ((angle <= 22) || (360 - angle <= 22)) {
-            _game.swipe(SwipeDirection.right);
-          } else if ((angle - 90).abs() <= 22) {
-            _game.swipe(SwipeDirection.up);
-          } else if ((angle - 180).abs() <= 22) {
-            _game.swipe(SwipeDirection.left);
-          } else if ((angle - 270).abs() <= 22) {
-            _game.swipe(SwipeDirection.down);
-          }
-          startOffset = null;
-        },
+      child: SwipeDetector(
+        onSwipe: (swipeDirection) => _game.swipe(swipeDirection),
         child: GridView.builder(
           itemCount: 16,
           padding: const EdgeInsets.all(AppSizes.spacingM),

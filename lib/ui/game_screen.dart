@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_2048_clone/constants/app_durations.dart';
 import 'package:flutter_2048_clone/constants/app_sizes.dart';
@@ -30,7 +32,6 @@ class _GameScreenState extends State<GameScreen> {
     return Scaffold(
       appBar: _buildAppBar(),
       body: _buildBody(),
-      floatingActionButton: _buildFAB(),
     );
   }
 
@@ -41,22 +42,6 @@ class _GameScreenState extends State<GameScreen> {
         AppStrings.appName,
         style: Theme.of(context).appBarTheme.titleTextStyle,
       ),
-    );
-  }
-
-  Widget _buildFAB() {
-    return AnimatedBuilder(
-      animation: _game,
-      builder: (context, child) {
-        return AnimatedSwitcher(
-          duration: AppDurations.m,
-          child: _game.status != GameStatus.playing
-              ? null
-              : FloatingActionButton(
-                  onPressed: () => _game.swipe(SwipeDirection.left),
-                ),
-        );
-      },
     );
   }
 
@@ -81,36 +66,59 @@ class _GameScreenState extends State<GameScreen> {
   }
 
   Widget _buildPlayBox() {
+    Offset? startOffset;
     return DecoratedBox(
       decoration: BoxDecoration(
         color: Colors.black26,
         borderRadius: BorderRadius.circular(AppSizes.borderRadius),
       ),
-      child: GridView.builder(
-        itemCount: 16,
-        padding: const EdgeInsets.all(AppSizes.spacingM),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 4,
-          mainAxisSpacing: AppSizes.spacingM,
-          crossAxisSpacing: AppSizes.spacingM,
-        ),
-        itemBuilder: (context, index) {
-          final int value = _game.getValueWithIndex(index);
-          return DecoratedBox(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-              color: Colors.amber,
-            ),
-            child: value == 0
-                ? null
-                : Center(
-                    child: Text(
-                      value.toString(),
-                      style: Theme.of(context).textTheme.displayMedium,
-                    ),
-                  ),
-          );
+      child: Listener(
+        onPointerDown: (topDownDetails) {
+          startOffset = topDownDetails.localPosition;
         },
+        onPointerUp: (tapUpDetails) {
+          if (startOffset == null) return;
+          final Offset differenceOffset = tapUpDetails.localPosition - startOffset!;
+          if (differenceOffset.distance < 50) return;
+          int angle = -differenceOffset.direction * 180 ~/ pi;
+          if (angle < 0) angle += 360;
+          if ((angle <= 22) || (360 - angle <= 22)) {
+            _game.swipe(SwipeDirection.right);
+          } else if ((angle - 90).abs() <= 22) {
+            _game.swipe(SwipeDirection.up);
+          } else if ((angle - 180).abs() <= 22) {
+            _game.swipe(SwipeDirection.left);
+          } else if ((angle - 270).abs() <= 22) {
+            _game.swipe(SwipeDirection.down);
+          }
+          startOffset = null;
+        },
+        child: GridView.builder(
+          itemCount: 16,
+          padding: const EdgeInsets.all(AppSizes.spacingM),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 4,
+            mainAxisSpacing: AppSizes.spacingM,
+            crossAxisSpacing: AppSizes.spacingM,
+          ),
+          itemBuilder: (context, index) {
+            final int value = _game.getValueWithIndex(index);
+            return DecoratedBox(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(AppSizes.borderRadius),
+                color: Colors.amber,
+              ),
+              child: value == 0
+                  ? null
+                  : Center(
+                      child: Text(
+                        value.toString(),
+                        style: Theme.of(context).textTheme.displayMedium,
+                      ),
+                    ),
+            );
+          },
+        ),
       ),
     );
   }

@@ -15,11 +15,9 @@ class HomeScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text(
+              Text(
                 AppStrings.appName,
-                style: TextStyle(
-                  fontSize: AppSizes.fontXL,
-                ),
+                style: Theme.of(context).textTheme.displayLarge,
               ),
               const SizedBox(
                 height: AppSizes.spacingL,
@@ -31,7 +29,10 @@ class HomeScreen extends StatelessWidget {
                     AppSizes.lengthM,
                   ),
                 ),
-                child: const Text(AppStrings.play),
+                child: Text(
+                  AppStrings.play,
+                  style: Theme.of(context).textTheme.labelLarge,
+                ),
                 onPressed: () {
                   Navigator.of(context).pushReplacement(
                     MaterialPageRoute<void>(

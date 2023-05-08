@@ -37,7 +37,10 @@ class _GameScreenState extends State<GameScreen> {
   AppBar _buildAppBar() {
     return AppBar(
       centerTitle: true,
-      title: const Text(AppStrings.appName),
+      title: Text(
+        AppStrings.appName,
+        style: Theme.of(context).appBarTheme.titleTextStyle,
+      ),
     );
   }
 
@@ -103,7 +106,7 @@ class _GameScreenState extends State<GameScreen> {
                 : Center(
                     child: Text(
                       value.toString(),
-                      style: const TextStyle(fontSize: AppSizes.fontL),
+                      style: Theme.of(context).textTheme.displayMedium,
                     ),
                   ),
           );
@@ -116,11 +119,9 @@ class _GameScreenState extends State<GameScreen> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        const Text(
+        Text(
           AppStrings.gameOver,
-          style: TextStyle(
-            fontSize: AppSizes.fontL,
-          ),
+          style: Theme.of(context).textTheme.displayMedium,
         ),
         const SizedBox(
           height: AppSizes.spacingL,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_2048_clone/constants/app_strings.dart';
+import 'package:flutter_2048_clone/constants/app_themes.dart';
 import 'package:flutter_2048_clone/ui/home_screen.dart';
 
 void main() {
@@ -11,10 +12,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       title: AppStrings.appName,
+      theme: AppThemes.light,
+      darkTheme: AppThemes.dark,
       debugShowCheckedModeBanner: false,
-      home: HomeScreen(),
+      home: const HomeScreen(),
     );
   }
 }

@@ -81,18 +81,23 @@ class _GameScreenState extends State<GameScreen> {
           ),
           itemBuilder: (context, index) {
             final int value = _game.getValueWithIndex(index);
-            return DecoratedBox(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-                color: Colors.amber,
-              ),
+            return AnimatedSwitcher(
+              duration: AppDurations.m,
               child: value == 0
-                  ? null
-                  : Center(
-                      child: Text(
-                        value.toString(),
-                        style: Theme.of(context).textTheme.displayMedium,
+                  ? const SizedBox.shrink()
+                  : DecoratedBox(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(AppSizes.borderRadius),
+                        color: Colors.amber,
                       ),
+                      child: value == 0
+                          ? null
+                          : Center(
+                              child: Text(
+                                value.toString(),
+                                style: Theme.of(context).textTheme.displayMedium,
+                              ),
+                            ),
                     ),
             );
           },

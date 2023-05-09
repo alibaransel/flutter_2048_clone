@@ -11,7 +11,7 @@ class Game extends ChangeNotifier {
     required this.width,
   }) {
     tileCount = height * width;
-    _grid = Matrix(
+    _grid = Matrix.filled(
       height: height,
       width: width,
       fillValue: 0,
@@ -34,7 +34,7 @@ class Game extends ChangeNotifier {
 
   void swipe(SwipeDirection direction) {
     _checkStatusIsPlaying();
-    final Matrix<int> newGrid = Matrix(
+    final Matrix<int> newGrid = Matrix.filled(
       height: height,
       width: width,
       fillValue: 0,
@@ -71,7 +71,7 @@ class Game extends ChangeNotifier {
       }
     }
     _grid = newGrid;
-    final List<int> emptyIndexes = _grid.findValueIndexes(0);
+    final List<int> emptyIndexes = _grid.findAll(0);
     if (emptyIndexes.isNotEmpty) {
       _spawnNewTile(emptyIndexes);
     } else {
@@ -82,7 +82,7 @@ class Game extends ChangeNotifier {
 
   void restart() {
     _checkStatusIsOver();
-    _grid = Matrix(
+    _grid = Matrix.filled(
       height: height,
       width: width,
       fillValue: 0,

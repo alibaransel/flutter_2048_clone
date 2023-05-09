@@ -36,22 +36,15 @@ class Game extends ChangeNotifier {
 
   void swipe(SwipeDirection direction) {
     _checkStatusIsPlaying();
-    final List<List<int>> Function() lineGetterFunction =
-        direction.axis == Axis.horizontal ? _grid.getColumns : _grid.getRows;
-    final List<int> Function(List<int>) tileGroupingFunction =
+    final List<List<int>> lines =
+        direction.axis == Axis.vertical ? _grid.getColumns() : _grid.getRows();
+    final List<List<int>> groupedLines =
         direction == SwipeDirection.up || direction == SwipeDirection.left
-            ? _groupTilesToStart
-            : _groupTilesToEnd;
-    Matrix<int> lineSetterFunction(List<List<int>> matrixLines) => direction.axis == Axis.horizontal
-        ? Matrix.fromColumns(height: height, width: width, columns: matrixLines)
-        : Matrix.fromRows(height: height, width: width, rows: matrixLines);
-
-    final List<List<int>> lines = lineGetterFunction.call();
-    final List<List<int>> newLines = [];
-    for (final List<int> line in lines) {
-      newLines.add(tileGroupingFunction.call(line));
-    }
-    _grid = lineSetterFunction(lines);
+            ? List.generate(lines.length, (i) => _groupTilesToStart(lines[i]))
+            : List.generate(lines.length, (i) => _groupTilesToEnd(lines[i]));
+    _grid = direction.axis == Axis.vertical
+        ? Matrix.fromColumns(height: height, width: width, columns: groupedLines)
+        : Matrix.fromRows(height: height, width: width, rows: groupedLines);
     final List<int> emptyIndexes = _grid.findAll(0);
     if (emptyIndexes.isNotEmpty) {
       _spawnNewTile(emptyIndexes);

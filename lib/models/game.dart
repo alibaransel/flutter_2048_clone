@@ -5,6 +5,8 @@ import 'package:flutter_2048_clone/enums/game_status.dart';
 import 'package:flutter_2048_clone/enums/swipe_direction.dart';
 import 'package:flutter_2048_clone/models/matrix.dart';
 
+//TODO: Separate value type int with typedef
+
 class Game extends ChangeNotifier {
   Game({
     required this.height,
@@ -34,43 +36,22 @@ class Game extends ChangeNotifier {
 
   void swipe(SwipeDirection direction) {
     _checkStatusIsPlaying();
-    final Matrix<int> newGrid = Matrix.filled(
-      height: height,
-      width: width,
-      fillValue: 0,
-    );
-    if (direction == SwipeDirection.left) {
-      for (int y = 0; y < height; y++) {
-        final List<int> values = [];
-        final List<int> counts = [];
-        int? lastValue;
-        for (int x = 0; x < width; x++) {
-          final int value = _grid.getValue(Point(x, y));
-          if (value == 0) continue;
-          if (value != lastValue) {
-            values.add(value);
-            counts.add(1);
-            lastValue = value;
-          } else {
-            counts.last += 1;
-          }
-        }
-        int currentX = 0;
-        for (int i = 0; i < values.length; i++) {
-          final int value = values[i];
-          final int count = counts[i];
-          for (int i2 = 0; i2 < (count ~/ 2); i2++) {
-            newGrid.setValue(Point(currentX, y), value * 2);
-            currentX += 1;
-          }
-          if (count.isOdd) {
-            newGrid.setValue(Point(currentX, y), value);
-            currentX += 1;
-          }
-        }
-      }
+    final List<List<int>> Function() lineGetterFunction =
+        direction.axis == Axis.horizontal ? _grid.getColumns : _grid.getRows;
+    final List<int> Function(List<int>) tileGroupingFunction =
+        direction == SwipeDirection.up || direction == SwipeDirection.left
+            ? _groupTilesToStart
+            : _groupTilesToEnd;
+    Matrix<int> lineSetterFunction(List<List<int>> matrixLines) => direction.axis == Axis.horizontal
+        ? Matrix.fromColumns(height: height, width: width, columns: matrixLines)
+        : Matrix.fromRows(height: height, width: width, rows: matrixLines);
+
+    final List<List<int>> lines = lineGetterFunction.call();
+    final List<List<int>> newLines = [];
+    for (final List<int> line in lines) {
+      newLines.add(tileGroupingFunction.call(line));
     }
-    _grid = newGrid;
+    _grid = lineSetterFunction(lines);
     final List<int> emptyIndexes = _grid.findAll(0);
     if (emptyIndexes.isNotEmpty) {
       _spawnNewTile(emptyIndexes);
@@ -106,5 +87,34 @@ class Game extends ChangeNotifier {
 
   void _finish() {
     _status = GameStatus.over;
+  }
+
+  List<int> _groupTilesToStart(List<int> tiles) {
+    final List<int> values = [];
+    final List<int> counts = [];
+    int? lastValue;
+    for (final int tile in tiles) {
+      if (tile == 0) continue;
+      if (tile != lastValue) {
+        values.add(tile);
+        counts.add(1);
+        lastValue = tile;
+      } else {
+        counts.last += 1;
+      }
+    }
+    final List<int> newRow = [];
+    for (int i = 0; i < values.length; i++) {
+      final int value = values[i];
+      final int count = counts[i];
+      newRow.addAll(List.filled(count ~/ 2, value * 2));
+      if (count.isOdd) newRow.add(value);
+    }
+    newRow.addAll(List.filled(tiles.length - newRow.length, 0));
+    return newRow;
+  }
+
+  List<int> _groupTilesToEnd(List<int> tiles) {
+    return _groupTilesToStart(tiles.reversed.toList()).reversed.toList();
   }
 }

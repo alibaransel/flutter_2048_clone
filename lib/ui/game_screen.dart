@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_2048_clone/constants/app_durations.dart';
 import 'package:flutter_2048_clone/constants/app_sizes.dart';
 import 'package:flutter_2048_clone/constants/app_strings.dart';
 import 'package:flutter_2048_clone/enums/game_status.dart';
+import 'package:flutter_2048_clone/enums/swipe_direction.dart';
 import 'package:flutter_2048_clone/models/game.dart';
 import 'package:flutter_2048_clone/ui/swipe_detector.dart';
 
@@ -25,11 +27,52 @@ class _GameScreenState extends State<GameScreen> {
     );
   }
 
+  void _swipeTiles(SwipeDirection direction) {
+    if (_game.status != GameStatus.playing) return;
+    _game.swipe(direction);
+  }
+
+  void _restartGame() {
+    if (_game.status != GameStatus.over) return;
+    _game.restart();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _buildAppBar(),
-      body: _buildBody(),
+    return CallbackShortcuts(
+      bindings: {
+        const SingleActivator(
+          LogicalKeyboardKey.arrowUp,
+          includeRepeats: false,
+        ): () => _swipeTiles(SwipeDirection.up),
+        const SingleActivator(
+          LogicalKeyboardKey.arrowDown,
+          includeRepeats: false,
+        ): () => _swipeTiles(SwipeDirection.down),
+        const SingleActivator(
+          LogicalKeyboardKey.arrowLeft,
+          includeRepeats: false,
+        ): () => _swipeTiles(SwipeDirection.left),
+        const SingleActivator(
+          LogicalKeyboardKey.arrowRight,
+          includeRepeats: false,
+        ): () => _swipeTiles(SwipeDirection.right),
+        const SingleActivator(
+          LogicalKeyboardKey.space,
+          includeRepeats: false,
+        ): _restartGame,
+        const SingleActivator(
+          LogicalKeyboardKey.enter,
+          includeRepeats: false,
+        ): _restartGame,
+      },
+      child: Focus(
+        autofocus: true,
+        child: Scaffold(
+          appBar: _buildAppBar(),
+          body: _buildBody(),
+        ),
+      ),
     );
   }
 
@@ -70,7 +113,7 @@ class _GameScreenState extends State<GameScreen> {
         borderRadius: BorderRadius.circular(AppSizes.borderRadius),
       ),
       child: SwipeDetector(
-        onSwipe: (swipeDirection) => _game.swipe(swipeDirection),
+        onSwipe: _swipeTiles,
         child: GridView.builder(
           itemCount: 16,
           padding: const EdgeInsets.all(AppSizes.spacingM),
@@ -119,7 +162,7 @@ class _GameScreenState extends State<GameScreen> {
         ),
         IconButton(
           icon: const Icon(Icons.replay),
-          onPressed: () => _game.restart(),
+          onPressed: _restartGame,
         ),
       ],
     );

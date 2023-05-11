@@ -5,7 +5,7 @@ import 'package:flutter_2048_clone/enums/game_status.dart';
 import 'package:flutter_2048_clone/enums/swipe_direction.dart';
 import 'package:flutter_2048_clone/models/matrix.dart';
 
-//TODO: Separate value type int with typedef
+typedef TileValue = int;
 
 class Game extends ChangeNotifier {
   Game({
@@ -28,17 +28,17 @@ class Game extends ChangeNotifier {
 
   GameStatus _status = GameStatus.notStarted;
 
-  late Matrix<int> _grid;
+  late Matrix<TileValue> _grid;
 
   GameStatus get status => _status;
 
-  int getValueWithIndex(int index) => _grid.getValueWithIndex(index);
+  TileValue getValueWithIndex(int index) => _grid.getValueWithIndex(index);
 
   void swipe(SwipeDirection direction) {
     _checkStatusIsPlaying();
-    final List<List<int>> lines =
+    final List<List<TileValue>> lines =
         direction.axis == Axis.vertical ? _grid.getColumns() : _grid.getRows();
-    final List<List<int>> groupedLines =
+    final List<List<TileValue>> groupedLines =
         direction == SwipeDirection.up || direction == SwipeDirection.left
             ? List.generate(lines.length, (i) => _groupTilesToStart(lines[i]))
             : List.generate(lines.length, (i) => _groupTilesToEnd(lines[i]));
@@ -82,11 +82,11 @@ class Game extends ChangeNotifier {
     _status = GameStatus.over;
   }
 
-  List<int> _groupTilesToStart(List<int> tiles) {
-    final List<int> values = [];
+  List<TileValue> _groupTilesToStart(List<TileValue> tiles) {
+    final List<TileValue> values = [];
     final List<int> counts = [];
-    int? lastValue;
-    for (final int tile in tiles) {
+    TileValue? lastValue;
+    for (final TileValue tile in tiles) {
       if (tile == 0) continue;
       if (tile != lastValue) {
         values.add(tile);
@@ -96,9 +96,9 @@ class Game extends ChangeNotifier {
         counts.last += 1;
       }
     }
-    final List<int> newRow = [];
+    final List<TileValue> newRow = [];
     for (int i = 0; i < values.length; i++) {
-      final int value = values[i];
+      final TileValue value = values[i];
       final int count = counts[i];
       newRow.addAll(List.filled(count ~/ 2, value * 2));
       if (count.isOdd) newRow.add(value);
@@ -107,7 +107,7 @@ class Game extends ChangeNotifier {
     return newRow;
   }
 
-  List<int> _groupTilesToEnd(List<int> tiles) {
+  List<TileValue> _groupTilesToEnd(List<TileValue> tiles) {
     return _groupTilesToStart(tiles.reversed.toList()).reversed.toList();
   }
 }

@@ -18,6 +18,8 @@ class Game extends ChangeNotifier {
       width: width,
       fillValue: 0,
     );
+    _spawnNewTile(List.generate(tileCount, (i) => i));
+    _spawnNewTile(_grid.findAll(0));
     _status = GameStatus.playing;
   }
 

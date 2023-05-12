@@ -90,14 +90,59 @@ class _GameScreenState extends State<GameScreen> {
     return Padding(
       padding: const EdgeInsets.all(AppSizes.spacingM),
       child: Center(
-        child: ConstrainedBox(
-          constraints: BoxConstraints.loose(const Size.square(AppSizes.lengthXL)),
-          child: AnimatedBuilder(
-            animation: _game,
-            builder: (context, child) {
+        child: AnimatedBuilder(
+          animation: _game,
+          builder: (context, child) {
+            return AnimatedSwitcher(
+              duration: AppDurations.m,
+              child: _game.status == GameStatus.playing ? _buildPlayBox() : _buildGameOverBox(),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPlayBox() {
+    return SwipeDetector(
+      onSwipe: _swipeTiles,
+      child: Container(
+        padding: const EdgeInsets.all(AppSizes.spacingM),
+        decoration: BoxDecoration(
+          color: Colors.black26,
+          borderRadius: BorderRadius.circular(AppSizes.borderRadius),
+        ),
+        child: AspectRatio(
+          aspectRatio: 1,
+          child: GridView.builder(
+            itemCount: 16,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 4,
+            ),
+            itemBuilder: (context, index) {
+              final int value = _game.getValueWithIndex(index);
               return AnimatedSwitcher(
                 duration: AppDurations.m,
-                child: _game.status == GameStatus.playing ? _buildPlayBox() : _buildGameOverBox(),
+                child: value == 0
+                    ? const SizedBox.shrink()
+                    : Container(
+                        margin: const EdgeInsets.all(AppSizes.spacingS),
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(AppSizes.borderRadius),
+                          color: Colors.amber,
+                        ),
+                        child: value == 0
+                            ? null
+                            : FittedBox(
+                                fit: BoxFit.fitWidth,
+                                child: Text(
+                                  value.toString(),
+                                  style: Theme.of(context).textTheme.displayMedium,
+                                ),
+                              ),
+                      ),
               );
             },
           ),
@@ -106,65 +151,25 @@ class _GameScreenState extends State<GameScreen> {
     );
   }
 
-  Widget _buildPlayBox() {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: Colors.black26,
-        borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-      ),
-      child: SwipeDetector(
-        onSwipe: _swipeTiles,
-        child: GridView.builder(
-          itemCount: 16,
-          padding: const EdgeInsets.all(AppSizes.spacingM),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 4,
-            mainAxisSpacing: AppSizes.spacingM,
-            crossAxisSpacing: AppSizes.spacingM,
-          ),
-          itemBuilder: (context, index) {
-            final int value = _game.getValueWithIndex(index);
-            return AnimatedSwitcher(
-              duration: AppDurations.m,
-              child: value == 0
-                  ? const SizedBox.shrink()
-                  : DecoratedBox(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-                        color: Colors.amber,
-                      ),
-                      child: value == 0
-                          ? null
-                          : Center(
-                              child: Text(
-                                value.toString(),
-                                style: Theme.of(context).textTheme.displayMedium,
-                              ),
-                            ),
-                    ),
-            );
-          },
-        ),
-      ),
-    );
-  }
-
   Widget _buildGameOverBox() {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          AppStrings.gameOver,
-          style: Theme.of(context).textTheme.displayMedium,
-        ),
-        const SizedBox(
-          height: AppSizes.spacingL,
-        ),
-        IconButton(
-          icon: const Icon(Icons.replay),
-          onPressed: _restartGame,
-        ),
-      ],
+    return FittedBox(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            AppStrings.gameOver,
+            softWrap: true,
+            maxLines: 2,
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.displayMedium,
+          ),
+          const SizedBox(height: AppSizes.spacingL),
+          IconButton(
+            icon: const Icon(Icons.replay),
+            onPressed: _restartGame,
+          ),
+        ],
+      ),
     );
   }
 }

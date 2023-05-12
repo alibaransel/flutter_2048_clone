@@ -5,6 +5,7 @@ class AppSizes {
   static const double lengthL = 200;
   static const double lengthXL = 400;
 
+  static const double spacingS = 5;
   static const double spacingM = 10;
   static const double spacingL = 50;
 

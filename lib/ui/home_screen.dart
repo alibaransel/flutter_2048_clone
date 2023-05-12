@@ -12,36 +12,38 @@ class HomeScreen extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(AppSizes.spacingM),
         child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                AppStrings.appName,
-                style: Theme.of(context).textTheme.displayLarge,
-              ),
-              const SizedBox(
-                height: AppSizes.spacingL,
-              ),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(
-                    AppSizes.lengthL,
-                    AppSizes.lengthM,
-                  ),
+          child: FittedBox(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  AppStrings.appName,
+                  style: Theme.of(context).textTheme.displayLarge,
                 ),
-                child: Text(
-                  AppStrings.play,
-                  style: Theme.of(context).textTheme.labelLarge,
+                const SizedBox(
+                  height: AppSizes.spacingL,
                 ),
-                onPressed: () {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute<void>(
-                      builder: (context) => const GameScreen(),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: const Size(
+                      AppSizes.lengthL,
+                      AppSizes.lengthM,
                     ),
-                  );
-                },
-              ),
-            ],
+                  ),
+                  child: Text(
+                    AppStrings.play,
+                    style: Theme.of(context).textTheme.labelLarge,
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute<void>(
+                        builder: (context) => const GameScreen(),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_2048_clone/constants/app_sizes.dart';
 import 'package:flutter_2048_clone/constants/app_strings.dart';
+import 'package:flutter_2048_clone/models/game.dart';
 import 'package:flutter_2048_clone/ui/game_screen.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -37,7 +38,12 @@ class HomeScreen extends StatelessWidget {
                   onPressed: () {
                     Navigator.of(context).pushReplacement(
                       MaterialPageRoute<void>(
-                        builder: (context) => const GameScreen(),
+                        builder: (context) => GameScreen(
+                          game: Game(
+                            height: 4,
+                            width: 4,
+                          ),
+                        ),
                       ),
                     );
                   },

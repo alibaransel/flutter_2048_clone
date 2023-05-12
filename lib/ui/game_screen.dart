@@ -9,33 +9,39 @@ import 'package:flutter_2048_clone/models/game.dart';
 import 'package:flutter_2048_clone/ui/swipe_detector.dart';
 
 class GameScreen extends StatefulWidget {
-  const GameScreen({super.key});
+  const GameScreen({
+    required this.game,
+    super.key,
+  });
+
+  final Game game;
 
   @override
   State<GameScreen> createState() => _GameScreenState();
 }
 
 class _GameScreenState extends State<GameScreen> {
-  late Game _game;
-
-  @override
-  void initState() {
-    super.initState();
-    _game = Game(
-      height: 4,
-      width: 4,
-    );
-  }
+  final Map<TileValue, Color> _tileColors = {
+    2: Colors.amber.shade500,
+    4: Colors.amber.shade600,
+    8: Colors.amber.shade700,
+    16: Colors.amber.shade800,
+    32: Colors.amber.shade900,
+    64: Colors.deepOrange,
+  };
+  static const Color _defaultColor = Colors.black;
 
   void _swipeTiles(SwipeDirection direction) {
-    if (_game.status != GameStatus.playing) return;
-    _game.swipe(direction);
+    if (widget.game.status != GameStatus.playing) return;
+    widget.game.swipe(direction);
   }
 
   void _restartGame() {
-    if (_game.status != GameStatus.over) return;
-    _game.restart();
+    if (widget.game.status != GameStatus.over) return;
+    widget.game.restart();
   }
+
+  Color _getTileColor(TileValue value) => _tileColors[value] ?? _defaultColor;
 
   @override
   Widget build(BuildContext context) {
@@ -91,11 +97,12 @@ class _GameScreenState extends State<GameScreen> {
       padding: const EdgeInsets.all(AppSizes.spacingM),
       child: Center(
         child: AnimatedBuilder(
-          animation: _game,
+          animation: widget.game,
           builder: (context, child) {
             return AnimatedSwitcher(
               duration: AppDurations.m,
-              child: _game.status == GameStatus.playing ? _buildPlayBox() : _buildGameOverBox(),
+              child:
+                  widget.game.status == GameStatus.playing ? _buildPlayBox() : _buildGameOverBox(),
             );
           },
         ),
@@ -121,7 +128,7 @@ class _GameScreenState extends State<GameScreen> {
               crossAxisCount: 4,
             ),
             itemBuilder: (context, index) {
-              final int value = _game.getValueWithIndex(index);
+              final int value = widget.game.getValueWithIndex(index);
               return AnimatedSwitcher(
                 duration: AppDurations.m,
                 child: value == 0
@@ -131,7 +138,7 @@ class _GameScreenState extends State<GameScreen> {
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-                          color: Colors.amber,
+                          color: _getTileColor(value),
                         ),
                         child: value == 0
                             ? null

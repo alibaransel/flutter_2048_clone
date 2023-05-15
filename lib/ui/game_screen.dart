@@ -140,15 +140,13 @@ class _GameScreenState extends State<GameScreen> {
                           borderRadius: BorderRadius.circular(AppSizes.borderRadius),
                           color: _getTileColor(value),
                         ),
-                        child: value == 0
-                            ? null
-                            : FittedBox(
-                                fit: BoxFit.fitWidth,
-                                child: Text(
-                                  value.toString(),
-                                  style: Theme.of(context).textTheme.displayMedium,
-                                ),
-                              ),
+                        child: FittedBox(
+                          fit: BoxFit.fitWidth,
+                          child: Text(
+                            value.toString(),
+                            style: Theme.of(context).textTheme.displayMedium,
+                          ),
+                        ),
                       ),
               );
             },
